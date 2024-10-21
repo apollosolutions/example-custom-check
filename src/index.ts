@@ -1,5 +1,5 @@
 import customLint from './eslint';
-import type { Config } from "@netlify/functions";
+import type { Config } from '@netlify/functions';
 
 export default customLint;
 
