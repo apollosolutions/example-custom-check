@@ -47,9 +47,9 @@ const githubClient = new ApolloClient({
 });
 
 const pullRequestQuery = gql`
-  query prsForBranch {
-    repository(owner: "swcollard", name: "test-action-apollo") {
-      pullRequests(headRefName: "product-name", first: 100) {
+  query prsForBranch($owner: String!, $name: String!, $branch: String!) {
+    repository(owner: $owner, name: $name) {
+      pullRequests(headRefName: $branch, first: 100) {
         totalCount
         nodes {
           author {
@@ -77,6 +77,23 @@ export default async function pullRequestCheck(req: Request, context: Context) {
 
   if (providedSignature === calculatedSignature) {
     const event = JSON.parse(payload);
+
+    const prResult = await githubClient.query({
+      query: pullRequestQuery,
+      variables: {
+        owner: Netlify.env.get('GITHUB_OWNER'),
+        name: Netlify.env.get('GITHUB_REPO'),
+        branch: event.checkStep.gitContext.branch,
+      },
+      context: {
+        headers: {
+          Authorization: `Bearer ${Netlify.env.get('GITHUB_TOKEN')}`,
+        },
+      },
+    });
+
+    console.log(JSON.stringify(`Github results: ${JSON.stringify(prResult)}`));
+
     const callbackResult = await graphOSClient.mutate({
       mutation: customCheckCallbackMutation,
       variables: {
@@ -85,7 +102,10 @@ export default async function pullRequestCheck(req: Request, context: Context) {
         input: {
           taskId: event.checkStep.taskId,
           workflowId: event.checkStep.workflowId,
-          status: 'SUCCESS',
+          status:
+            prResult.data.repository.pullRequests.totalCount > 0
+              ? 'SUCCESS'
+              : 'FAILURE',
           violations: [],
         },
       },

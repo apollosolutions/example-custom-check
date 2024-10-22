@@ -108,9 +108,6 @@ export default async function customLint(req: Request, context: Context) {
   hmac.update(payload);
   const calculatedSignature = `sha256=${hmac.digest('hex')}`;
 
-  console.log(`Provided signature: ${providedSignature}`);
-  console.log(`Calculated signature: ${calculatedSignature}`);
-
   if (providedSignature === calculatedSignature) {
     const event = JSON.parse(payload) as Payload;
     console.log(`Handling taskId: ${event.checkStep.taskId}`);
