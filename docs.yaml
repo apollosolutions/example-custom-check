@@ -1,5 +1,5 @@
 name: example-custom-check
-description: A reference example showcasing the new [custom checks](/graphos/platform/schema-management/checks/custom#how-custom-checks-work) functionality in GraphOS using ESLint.
+description: A reference example showcasing the new [custom checks](https://apollographql.com/docs/graphos/platform/schema-management/checks/custom) functionality in GraphOS using ESLint.
 tags:
   - Example
   - Schema checks
