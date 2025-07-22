@@ -4,7 +4,7 @@ import type { Context } from '@netlify/functions';
 
 const graphOSClient = new ApolloClient({
   uri:
-    Netlify.env.get('APOLLO_STUDIO_URL') ??
+    process.env.APOLLO_STUDIO_URL ??
     'https://api.apollographql.com/api/graphql',
   cache: new InMemoryCache(),
 });
@@ -64,8 +64,8 @@ const pullRequestQuery = gql`
 `;
 
 export default async function pullRequestCheck(req: Request, context: Context) {
-  const hmacSecret = Netlify.env.get('APOLLO_HMAC_TOKEN') || '';
-  const apiKey = Netlify.env.get('APOLLO_API_KEY') || '';
+  const hmacSecret = process.env.APOLLO_HMAC_TOKEN || '';
+  const apiKey = process.env.APOLLO_API_KEY || '';
 
   const payload = (await req.text()) || '{}';
   console.log(`Payload: ${payload}`);
@@ -81,13 +81,13 @@ export default async function pullRequestCheck(req: Request, context: Context) {
     const prResult = await githubClient.query({
       query: pullRequestQuery,
       variables: {
-        owner: Netlify.env.get('GITHUB_OWNER'),
-        name: Netlify.env.get('GITHUB_REPO'),
+        owner: process.env.GITHUB_OWNER,
+        name: process.env.GITHUB_REPO,
         branch: event.checkStep.gitContext.branch,
       },
       context: {
         headers: {
-          Authorization: `Bearer ${Netlify.env.get('GITHUB_TOKEN')}`,
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
         },
       },
     });

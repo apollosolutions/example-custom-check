@@ -5,7 +5,7 @@ import * as graphql from '@graphql-eslint/eslint-plugin';
 import type { Config, Context } from '@netlify/functions';
 import { ESLint, Linter } from 'eslint';
 
-const linter = new Linter({ cwd: '.' });
+const linter = new Linter({ cwd: process.cwd() });
 
 function getSourceLocationCoordiante(
   code: string,
@@ -24,7 +24,7 @@ function getSourceLocationCoordiante(
 
 const apolloClient = new ApolloClient({
   uri:
-    Netlify.env.get('APOLLO_STUDIO_URL') ??
+    process.env.APOLLO_STUDIO_URL ??
     'https://api.apollographql.com/api/graphql',
   cache: new InMemoryCache(),
 });
@@ -97,8 +97,8 @@ interface Payload {
 }
 
 export default async function customLint(req: Request, context: Context) {
-  const hmacSecret = Netlify.env.get('APOLLO_HMAC_TOKEN') || '';
-  const apiKey = Netlify.env.get('APOLLO_API_KEY') || '';
+  const hmacSecret = process.env.APOLLO_HMAC_TOKEN || '';
+  const apiKey = process.env.APOLLO_API_KEY || '';
 
   const payload = (await req.text()) || '{}';
   console.log(`Payload: ${payload}`);
@@ -163,7 +163,7 @@ export default async function customLint(req: Request, context: Context) {
             plugins: {
               '@graphql-eslint': graphql as unknown as ESLint.Plugin,
             },
-            rules: graphql.flatConfigs['schema-recommended']
+            rules: graphql.configs['flat/schema-recommended']
               .rules as unknown as Linter.RulesRecord,
             languageOptions: {
               parser: graphql,
