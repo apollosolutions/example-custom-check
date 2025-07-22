@@ -35,7 +35,6 @@ After building and deploying the function, you need to [enable custom schema che
 1. Run a schema check using the [Rover CLI](https://www.apollographql.com/docs/rover/) to test the integration.
    - You should see check results in GraphOS Studio on the **Checks** page. You can also verify logs in the Netlify console.
 
-
 ## Example Github PR implementation
 
 This example implementation also deploys a [Netlify function](https://www.netlify.com/platform/core/functions/) that can be used to set up a webhook integration with GraphOS [schema checks](https://www.apollographql.com/docs/graphos/delivery/schema-checks).
