@@ -1,0 +1,39 @@
+# --- schema.graphql with violations ---
+
+"""A product available in the catalog.
+Testing Testing
+This is an updated description to trigger a new check.
+This is a test comment to trigger a new check run. (Modified)
+"""
+type Product @key(fields: "id") {
+  """The unique identifier for the product."""
+  id: ID!
+  """A unique string identifier for the product, often a SKU or similar."""
+  bar: String!
+  """An integer value associated with the product, e.g., quantity or stock level."""
+  baz: Int
+}
+
+# This type name (bad_type_name) violates the 'PascalCase' naming convention.
+"""This type is intentionally named incorrectly to demonstrate custom check failures."""
+type bad_type_name {
+  id: ID!
+  # This field name (bad_field_name) violates the 'camelCase' naming convention.
+  """This field is intentionally named incorrectly to demonstrate custom check failures."""
+  bad_field_name: String!
+}
+
+extend type Query {
+  """Fetches a single Product by its unique 'bar' identifier."""
+  product(
+    """The unique string identifier for the Product to fetch."""
+    bar: String!
+  ): Product
+  """Fetches all available Products."""
+  allProducts: [Product!]!
+  # This field name (get_bad_types) violates the 'camelCase' naming convention.
+  """This field is intentionally named incorrectly to demonstrate custom check failures."""
+  get_bad_types: [bad_type_name!]! # Reference changed back to bad_type_name
+}
+
+# --- End of schema.graphql with violations ---
